@@ -1,0 +1,120 @@
+:root {
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 400;
+  color: #c9d1d9;
+  background-color: #0d1117;
+}
+
+.container {
+  box-sizing: border-box;
+}
+
+#header {
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: sticky;
+  top: 0;
+  background-color: #0d1117;
+  z-index: 10;
+  border-bottom: 1px solid #8b949e;
+}
+
+#file-name {
+  font-size: 1.15rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60vw;
+}
+
+#content {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  border-top: 1px solid #30363d;
+}
+
+#content h1,
+#content h2,
+#content h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #ffffff;
+}
+
+#content h1 { font-size: 2.25rem; }
+#content h2 { font-size: 1.75rem; border-bottom: 1px solid #30363d; padding-bottom: 0.3em; }
+#content h3 { font-size: 1.25rem; }
+
+#content p {
+  margin-bottom: 1rem;
+}
+
+#content ul,
+#content ol {
+  padding-left: 2em;
+  margin-bottom: 1rem;
+}
+
+#content li {
+  margin-bottom: 0.25rem;
+}
+
+#content pre,
+#content code {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+#content code {
+  background-color: #30363d;
+  color: #c9d1d9;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+#content pre {
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  padding: 1em;
+  overflow-x: auto;
+}
+
+#content pre code {
+  background: none;
+  padding: 0;
+  font-size: 1em;
+}
+
+#content blockquote {
+  margin: 0 0 1rem 0;
+  padding: 0 1em;
+  color: #8b949e;
+  border-left: 0.25em solid #30363d;
+}
+
+#content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  background-color: #fff;
+}
