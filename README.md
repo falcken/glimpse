@@ -1,7 +1,15 @@
-# Tauri + Vanilla TS
+# Glimpse
 
-This template should help get you started developing with Tauri in vanilla HTML, CSS and Typescript.
+Glimpse is a Markdown renderer with LaTeX support, built using Tauri and Rust. It leverages LaTeX to render mathematical expressions into SVG.
 
-## Recommended IDE Setup
+## Features
+- Bla bla bla
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+## Installation
+TBD
+
+## Development environment
+To run the development environment, use:
+```
+pnpm install && pnpm tauri dev
+```

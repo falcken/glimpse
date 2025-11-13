@@ -1,18 +1,34 @@
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from "@tauri-apps/api/core";
 
+import 'katex/dist/katex.min.css';
 import MarkdownIt from 'markdown-it';
 import mdLineNumbers from 'markdown-it-inject-linenumbers';
+import { renderLatex, renderInlineKatex } from './latex/render';
 
-interface MarkdownUpdateEvent {
-  fileName: string;
-  content: string;
-  cursorLine: number;
-}
+import texmath from 'markdown-it-texmath';
 
+import { MarkdownUpdateEvent } from './types/types';
+
+// Initialize MarkdownIt with plugins
 const md = new MarkdownIt()
-  .use(mdLineNumbers as any)
+  .use(mdLineNumbers)
+  .use(texmath, {
+    delimiters: 'dollars',
+  });
 
+md.renderer.rules.math_inline = (tokens, idx): string => {
+  return renderInlineKatex(tokens, idx, false);
+};
+
+md.renderer.rules.math_block = (tokens, idx): string => {
+  return renderLatex(tokens, idx, true);
+};
+
+md.renderer.rules.math_inline_double = md.renderer.rules.math_block;
+md.renderer.rules.math_block_eqno = md.renderer.rules.math_block;
+
+// Render Markdown on events
 const contentEl = document.getElementById('content');
 
 listen<MarkdownUpdateEvent>('markdown-update', (event) => {

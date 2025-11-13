@@ -118,3 +118,37 @@ body {
   border-radius: 4px;
   background-color: #fff;
 }
+
+.latex-rendered-block {
+  display: block;
+  margin: 1em 0;
+  text-align: center;
+}
+
+.latex-rendered-block svg {
+  max-width: 100%;
+  height: auto;
+  padding: 1em;
+  border: 1px solid #30363d;
+  fill: currentColor;
+}
+
+.latex-placeholder {
+  background-color: rgba(255, 255, 255, 0.15);
+  height: 1rem;
+  
+  animation: pulse 1.8s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
