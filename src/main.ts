@@ -11,7 +11,7 @@ interface MarkdownUpdateEvent {
 }
 
 const md = new MarkdownIt()
-  .use(mdLineNumbers)
+  .use(mdLineNumbers as any)
 
 const contentEl = document.getElementById('content');
 
