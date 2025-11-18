@@ -44,8 +44,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-left: 80px; 
-  padding-right: 16px; 
   box-sizing: border-box;
 }
 
@@ -191,4 +189,17 @@ body {
   0% { opacity: 0.6; }
   50% { opacity: 0.3; }
   100% { opacity: 0.6; }
+}
+
+.line-highlighted:before {
+  content: ">";
+  display: inline-block;
+  margin-left: -1.5rem;
+  margin-right: 0.5rem;
+  width: 1rem;
+  text-align: right;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  user-select: none;
 }
