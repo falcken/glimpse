@@ -44,8 +44,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-left: 80px; 
-  padding-right: 16px; 
   box-sizing: border-box;
 }
 
