@@ -5,37 +5,70 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  --titlebar-height: 40px;
+  --bg-color: #0d1117;
+  --header-bg: #161b22;
+  --border-color: #30363d;
+  --teal-accent: #329ea3;
+  --text-primary: #c9d1d9;
+  --text-secondary: #8b949e;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-size: 16px;
-  line-height: 1.6;
-  font-weight: 400;
-  color: #c9d1d9;
-  background-color: #0d1117;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+}
+
+.titlebar {
+  height: var(--titlebar-height);
+  background: var(--header-bg);
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.titlebar-drag-region {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 80px; 
+  padding-right: 16px; 
+  box-sizing: border-box;
+}
+
+.titlebar-text {
+  font-family: sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.5px;
+  margin-top: -px;
+  cursor: default;
 }
 
 .container {
   box-sizing: border-box;
-}
-
-#header {
-  padding: 0.5rem 1rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  position: sticky;
-  top: 0;
-  background-color: #0d1117;
-  z-index: 10;
-  border-bottom: 1px solid #8b949e;
+  padding-top: var(--titlebar-height); 
 }
 
 #file-name {
-  font-size: 1.15rem;
+  font-family: sans-serif;
+  font-size: 0.9rem;
   font-weight: 500;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -43,29 +76,33 @@ body {
 }
 
 #content {
-  padding: 2rem;
+  padding: 1rem 2rem 2rem 2rem;
   max-width: 800px;
   margin: 0 auto;
   box-sizing: border-box;
-  border-top: 1px solid #30363d;
 }
 
 #content h1,
 #content h2,
 #content h3 {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   margin-bottom: 1rem;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.25;
   color: #ffffff;
 }
 
-#content h1 { font-size: 2.25rem; }
-#content h2 { font-size: 1.75rem; border-bottom: 1px solid #30363d; padding-bottom: 0.3em; }
+#content h1 { font-size: 2rem; }
+#content h2 { 
+  font-size: 1.5rem; 
+  border-bottom: 1px solid var(--border-color); 
+  padding-bottom: 0.3em; 
+}
 #content h3 { font-size: 1.25rem; }
 
 #content p {
   margin-bottom: 1rem;
+  line-height: 1.6;
 }
 
 #content ul,
@@ -80,41 +117,78 @@ body {
 
 #content pre,
 #content code {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'ui-monospace', 'SFMono-Regular', 'SF Mono', Menlo, Consolas, monospace;
 }
 
 #content code {
-  background-color: #30363d;
-  color: #c9d1d9;
+  background-color: rgba(110, 118, 129, 0.4);
+  color: var(--text-primary);
   padding: 0.2em 0.4em;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 0.85em;
 }
 
 #content pre {
-  background-color: #0d1117;
-  border: 1px solid #30363d;
-  border-radius: 4px;
-  padding: 1em;
+  background-color: #161b22;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 1rem;
   overflow-x: auto;
+  margin-bottom: 1rem;
 }
 
 #content pre code {
   background: none;
   padding: 0;
-  font-size: 1em;
+  font-size: 0.9em;
+  color: var(--text-primary);
 }
 
 #content blockquote {
   margin: 0 0 1rem 0;
   padding: 0 1em;
-  color: #8b949e;
-  border-left: 0.25em solid #30363d;
+  color: var(--text-secondary);
+  border-left: 0.25em solid var(--border-color);
 }
 
 #content img {
   max-width: 100%;
   height: auto;
-  border-radius: 4px;
-  background-color: #fff;
+  border-radius: 6px;
+  background-color: transparent;
+}
+
+.latex-rendered-block {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 1.5em 0;
+  text-align: center;
+}
+
+.latex-rendered-block svg {
+  vertical-align: middle;
+  max-width: 100%;
+  height: auto;
+  padding: 1em;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  fill: currentColor;
+  background-color: #161b22;
+}
+
+.latex-placeholder {
+  background-color: rgba(50, 158, 163, 0.1);
+  border: 1px dashed var(--teal-accent);
+  border-radius: 6px;
+  display: block;
+  height: 50px;
+  margin: 10px 0;
+  animation: pulse 1.8s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+  100% { opacity: 0.6; }
 }

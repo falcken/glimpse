@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "markdown-macos",
+  "productName": "Glimpse",
   "version": "0.1.0",
   "identifier": "com.falck.glimpse",
   "build": {
@@ -13,9 +13,12 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "markdown-macos",
+        "title": "Glimpse",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "decorations": true,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true
       }
     ],
     "security": {
