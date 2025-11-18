@@ -6,6 +6,8 @@ import MarkdownIt from 'markdown-it';
 import mdLineNumbers from 'markdown-it-inject-linenumbers';
 import { renderLatex, renderInlineKatex } from './latex/render';
 
+import { setupMenu } from "./menu/menu";
+
 import texmath from 'markdown-it-texmath';
 
 import { MarkdownUpdateEvent } from './types/types';
@@ -62,7 +64,8 @@ const scrollIntoView = (lineNumber: number) => {
   }
 
   if (targetElement) {
-    targetElement.scrollIntoView({ behavior: 'auto', block: 'center' });
+    targetElement.scrollIntoView({ behavior: 'instant', block: 'end' });
+    //targetElement.scrollTo ({ top: targetElement.scrollTop - 20 });
   } else {
     console.warn(`No element found for cursor line ${lineNumber}`);
   }
@@ -81,3 +84,6 @@ const handleCmdClick = (event: MouseEvent) => {
 }
 
 document.addEventListener('click', handleCmdClick);
+
+// Setup application menu
+setupMenu().catch(console.error);

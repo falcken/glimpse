@@ -31,7 +31,7 @@ export const renderLatex = (tokens: any[], idx: number, displayMode: boolean): s
   void callRenderer(id, escapedTex, displayMode);
 
   return displayMode
-    ? blockPlaceholderStyle(calculateHeight(tex), id)
+    ? blockPlaceholderStyle(id)
     : inlinePlaceholderStyle(calculateWidth(tex), id);
 }
 
@@ -46,7 +46,7 @@ const calculateHeight = (tex: string): number => {
 }
 
 const inlinePlaceholderStyle = (width: number, id: string) => `<span class="latex-placeholder" id="${id}" style="display:inline-block; width:${width}px;"></span>`;
-const blockPlaceholderStyle = (height: number, id: string) => `<div class="latex-placeholder" id="${id}" style="display:block; height:${height}px; margin: 10px 0;"></div>`;
+const blockPlaceholderStyle = (id: string) => `<div class="latex-placeholder" id="${id}"></div>`;
 
 const callRenderer = async (id: string, tex: string, displayMode: boolean) => {
     const hash = `${tex}-${displayMode}`;
