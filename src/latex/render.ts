@@ -3,6 +3,28 @@ import katex from 'katex';
 import { v4 as uuidv4 } from 'uuid';
 
 const latexCache: Map<string, string> = new Map();
+let activeRenders = 0;
+let latexQueueCallback: (() => void) | null = null;
+
+export const resetLatexQueue = () => {
+    activeRenders = 0;
+    latexQueueCallback = null;
+};
+
+export const whenLatexQueueEmpty = (callback: () => void) => {
+    if (activeRenders === 0) {
+        callback();
+    } else {
+        latexQueueCallback = callback;
+    }
+};
+
+const onRenderComplete = () => {
+    activeRenders--;
+    if (activeRenders === 0 && latexQueueCallback) {
+        latexQueueCallback();
+    }
+}
 
 export const renderInlineKatex = (tokens: any[], idx: number, displayMode: boolean): string => {
   const token = tokens[idx];
@@ -25,6 +47,8 @@ export const renderLatex = (tokens: any[], idx: number, displayMode: boolean): s
   const tex = token.content;
   const id = uuidv4();  
 
+  activeRenders++;
+  
   console.log('Rendering LaTeX:', { id, tex });
   const escapedTex = tex.replace(/"/g, '&quot;');
 
@@ -33,16 +57,12 @@ export const renderLatex = (tokens: any[], idx: number, displayMode: boolean): s
   return displayMode
     ? blockPlaceholderStyle(id)
     : inlinePlaceholderStyle(calculateWidth(tex), id);
-}
+};
 
 const calculateWidth = (tex: string): number => {
     const baseWidth = 10;
     const charWidth = 8; 
     return baseWidth + (tex.length * charWidth);
-}
-
-const calculateHeight = (tex: string): number => {
-    return 50;
 }
 
 const inlinePlaceholderStyle = (width: number, id: string) => `<span class="latex-placeholder" id="${id}" style="display:inline-block; width:${width}px;"></span>`;
@@ -57,6 +77,7 @@ const callRenderer = async (id: string, tex: string, displayMode: boolean) => {
 
         setTimeout(() => {
             replaceWithLatex(id, svgString!, displayMode);
+            onRenderComplete();
         }, 0);
 
         return;
@@ -71,6 +92,8 @@ const callRenderer = async (id: string, tex: string, displayMode: boolean) => {
         latexCache.set(hash, svgString);
     } catch (error) {
         console.error('Error rendering LaTeX:', error);
+    } finally {
+        onRenderComplete();
     }
 };
 
