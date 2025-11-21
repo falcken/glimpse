@@ -6,11 +6,15 @@ pub mod constants;
 
 use tauri::{Builder};
 use tauri::menu::MenuBuilder;
+use tauri_plugin_dialog::{DialogExt, MessageDialogButtons};
+use tauri_plugin_fs::FsExt;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             commands::line_clicked,
             commands::render_latex
