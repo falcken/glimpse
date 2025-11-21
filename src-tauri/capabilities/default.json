@@ -10,6 +10,29 @@
     "opener:default",
     "core:menu:default",
     "core:window:default",
-    "core:window:allow-start-dragging"
+    "core:window:allow-start-dragging",
+    "dialog:default",
+    
+    {
+      "identifier": "fs:allow-write-text-file",
+      "options": { "scope": ["$APPCONFIG/*"] }
+    },
+    {
+      "identifier": "fs:allow-read-text-file",
+      "options": { "scope": ["$APPCONFIG/*"] }
+    },
+    {
+      "identifier": "fs:allow-exists",
+      "options": { "scope": ["$APPCONFIG/*"] }
+    },
+    {
+      "identifier": "fs:allow-remove",
+      "options": { "scope": ["$APPCONFIG/*"] }
+    },
+
+    {
+      "identifier": "fs:allow-read-text-file",
+      "options": { "scope": ["**"] }
+    }
   ]
 }
