@@ -17,6 +17,7 @@ export async function setupMenu() {
         text: 'Settings...',
         action: () => {
           console.log('settings pressed');
+          window.dispatchEvent(new Event('open-settings'));
         },
       },
         await PredefinedMenuItem.new({ item: 'Separator' }),

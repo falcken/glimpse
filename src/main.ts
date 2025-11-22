@@ -7,6 +7,7 @@ import mdLineNumbers from "markdown-it-inject-linenumbers";
 import { renderLatex, renderInlineKatex, resetLatexQueue, whenLatexQueueEmpty } from "./latex/render";
 
 import { setupMenu } from "./menu/menu";
+import { SettingsManager } from './settings/settings';
 
 import texmath from "markdown-it-texmath";
 
@@ -113,7 +114,17 @@ const handleCmdClick = (event: MouseEvent) => {
   }
 };
 
-document.addEventListener("click", handleCmdClick);
+const initApp = () => {
+  // CMD+Click handling
+  document.addEventListener("click", handleCmdClick);
+
+  // Setup menu
+  setupMenu().catch(console.error);
+
+  // Settings
+  new SettingsManager();
+};
+
 
 // Setup application menu
-setupMenu().catch(console.error);
+initApp();

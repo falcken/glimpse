@@ -10,7 +10,7 @@
   --bg-color: #0d1117;
   --header-bg: #161b22;
   --border-color: #30363d;
-  --teal-accent: #329ea3;
+  --teal-accent: rgb(76, 155, 160);
   --text-primary: #c9d1d9;
   --text-secondary: #8b949e;
 }
@@ -202,4 +202,132 @@ body {
   font-weight: 600;
   color: var(--text-secondary);
   user-select: none;
+}
+
+dialog {
+  border: none;
+  border-radius: 8px;
+  padding: 0;
+  width: 500px;
+  max-width: 90vw;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  font-family: system-ui, sans-serif;
+}
+
+dialog::backdrop {
+  margin-top: var(--titlebar-height);
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(1px);
+}
+
+dialog[open] {
+  display: flex;
+}
+
+#settings-modal {
+  max-width: 800px;
+  height: 600px;
+  width: 90vw;
+  flex-direction: row;
+  color: white;
+  background-color: rgb(35, 35, 35);
+}
+
+.settings-sidebar {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  background-color: rgb(23, 39, 41);
+  width: 150px;
+  padding: 10px;
+}
+
+.settings-sidebar-item {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 5px;
+  margin-bottom: 3px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.settings-sidebar-item.active,
+.settings-sidebar-item:hover {
+  background-color: var(--teal-accent);
+}
+
+.settings-sidebar h2 {
+  font-size: 0.7rem;
+  margin: 15px 0 10px 0;
+  padding-bottom: 5px;
+  padding: 0 5px;
+  color: var(--text-secondary);
+}
+
+.settings-divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 10px 0;
+}
+
+.modal-body {
+  flex: 1;
+  padding: 30px;
+}
+
+.settings-panel {
+  display: none;
+}
+
+.settings-panel.active {
+  display: block;
+  animation: fadeIn 0.1s ease-in-out;
+}
+
+.settings-panel h2 {
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+.settings-panel h3 {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.settings-panel p {
+  font-size: 0.8rem;
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.settings-panel a {
+  color: var(--teal-accent);
+  font-size: 0.8rem;
+}
+
+#preamble {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+#preamble button {
+  background-color: var(--teal-accent);
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
