@@ -12,27 +12,52 @@
     "core:window:default",
     "core:window:allow-start-dragging",
     "dialog:default",
-    
+    {
+      "identifier": "fs:allow-exists",
+      "allow": [
+        {
+          "path": "$APPCONFIG/**"
+        }
+      ]
+    },
     {
       "identifier": "fs:allow-write-text-file",
-      "options": { "scope": ["$APPCONFIG/*"] }
+      "allow": [
+        {
+          "path": "$APPCONFIG/**"
+        }
+      ]
     },
     {
       "identifier": "fs:allow-read-text-file",
-      "options": { "scope": ["$APPCONFIG/*"] }
-    },
-    {
-      "identifier": "fs:allow-exists",
-      "options": { "scope": ["$APPCONFIG/*"] }
+      "allow": [
+        {
+          "path": "$APPCONFIG/**"
+        },
+        {
+          "path": "**"
+        }
+      ]
     },
     {
       "identifier": "fs:allow-remove",
-      "options": { "scope": ["$APPCONFIG/*"] }
+      "allow": [
+        {
+          "path": "$APPCONFIG/**"
+        }
+      ]
     },
-
     {
-      "identifier": "fs:allow-read-text-file",
-      "options": { "scope": ["**"] }
-    }
+      "identifier": "fs:allow-mkdir",
+      "allow": [
+        {
+          "path": "$APPCONFIG"
+        },
+        {
+          "path": "$APPCONFIG/**"
+        }
+      ]
+    },
+    "fs:default"
   ]
 }

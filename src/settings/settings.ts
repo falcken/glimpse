@@ -4,6 +4,7 @@ import {
   readTextFile,
   exists,
   remove,
+  mkdir,
   BaseDirectory,
 } from "@tauri-apps/plugin-fs";
 
@@ -46,6 +47,7 @@ export class SettingsManager {
     // Open event
     window.addEventListener("open-settings", () => {
       this.modal.showModal();
+      this.refreshStatus();
     });
 
     window.addEventListener("click", this.handleClickOutside);
@@ -82,6 +84,12 @@ export class SettingsManager {
       });
 
       if (!selectedPath || typeof selectedPath !== "string") return;
+
+      // Ensure directory exists, recursive = true fails silently if it does
+      await mkdir("", { 
+        baseDir: BaseDirectory.AppConfig, 
+        recursive: true 
+      });
 
       // Read source, write copy
       const content = await readTextFile(selectedPath);
@@ -125,16 +133,29 @@ export class SettingsManager {
     }
   }
 
-  public async refreshStatus() {
+public async refreshStatus() {
     const statusEl = document.getElementById("preamble-status");
     if (!statusEl) return;
+
+    console.log("Refreshing preamble status...");
 
     const existsPreamble = await exists(PREAMBLE_FILENAME, {
       baseDir: BaseDirectory.AppConfig,
     });
 
+    // Update Text
     statusEl.textContent = existsPreamble
-      ? "Custom preamble is set."
-      : "Using default preamble.";
+      ? "Custom preamble loaded"
+      : "Using default preamble";
+    
+    // Update Class for Styling
+    // We toggle the 'status-active' class based on existence
+    if (existsPreamble) {
+      statusEl.classList.add("status-active");
+    } else {
+      statusEl.classList.remove("status-active");
+    }
+
+    console.log("Preamble status updated.");
   }
 }

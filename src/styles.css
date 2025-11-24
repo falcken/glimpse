@@ -293,13 +293,13 @@ dialog[open] {
 }
 
 .settings-panel h3 {
-  margin: 0;
+  margin: 0 0 1px 0;
   font-size: 0.8rem;
   font-weight: 500;
 }
 
 .settings-panel p {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   margin: 0;
   color: var(--text-secondary);
 }
@@ -309,6 +309,41 @@ dialog[open] {
   font-size: 0.8rem;
 }
 
+#preamble-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.button-primary {
+  background-color: var(--teal-accent);
+  border: none;
+  color: white;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.button-primary:hover {
+  background-color: #3c767a;
+}
+
+.button-secondary {
+  background-color: transparent;
+  border: 1px solid var(--teal-accent);
+  color: var(--teal-accent);
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.button-secondary:hover {
+  background-color: rgba(76, 155, 160, 0.1);
+}
+
 #preamble {
   display: flex;
   justify-content: space-between;
@@ -316,15 +351,42 @@ dialog[open] {
   margin-top: 10px;
 }
 
-#preamble button {
+#preamble-status {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  
+  /* Default State (Gray/Inactive) */
+  background-color: rgba(139, 148, 158, 0.1); /* faint grey bg */
+  color: var(--text-secondary);
+  border: 1px solid rgba(139, 148, 158, 0.2);
+  transition: all 0.2s ease;
+}
+
+#preamble-status::before {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 8px;
+  background-color: var(--text-secondary);
+  box-shadow: 0 0 0 1px rgba(139, 148, 158, 0.2);
+}
+
+#preamble-status.status-active {
+  background-color: rgba(76, 155, 160, 0.1);
+  color: var(--teal-accent);
+  border: 1px solid rgba(76, 155, 160, 0.3);
+}
+
+#preamble-status.status-active::before {
   background-color: var(--teal-accent);
-  border: none;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  font-weight: 500;
+  box-shadow: 0 0 5px rgba(76, 155, 160, 0.4);
 }
 
 @keyframes fadeIn {
