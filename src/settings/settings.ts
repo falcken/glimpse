@@ -48,6 +48,7 @@ export class SettingsManager {
 
     // Open event
     window.addEventListener("open-settings", () => {
+      this.switchPage("general", this.settingsSidebarItems[0]);
       this.modal.showModal();
       this.refreshStatus();
     });
