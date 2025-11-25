@@ -6,6 +6,11 @@ const latexCache: Map<string, string> = new Map();
 let activeRenders = 0;
 let latexQueueCallback: (() => void) | null = null;
 
+export const invalidateLatexCache = () => {
+    latexCache.clear();
+    console.log('LaTeX cache invalidated.');
+};
+
 export const resetLatexQueue = () => {
     activeRenders = 0;
     latexQueueCallback = null;

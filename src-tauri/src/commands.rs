@@ -1,8 +1,8 @@
-use tauri::{AppHandle, command};
-use tokio::net::TcpStream;
-use tokio::io::AsyncWriteExt;
-use crate::latex;
 use crate::constants;
+use crate::latex;
+use tauri::{command, AppHandle, State};
+use tokio::io::AsyncWriteExt;
+use tokio::net::TcpStream;
 
 #[command]
 pub async fn line_clicked(_app: AppHandle, line_number: u32) {
@@ -24,10 +24,23 @@ pub async fn line_clicked(_app: AppHandle, line_number: u32) {
 
 #[command]
 pub async fn render_latex(
-    _app: AppHandle,
+    state: State<'_, latex::LatexSettings>, // <--- Inject State here
     id: String,
     tex: String,
     display_mode: bool,
 ) -> Result<String, String> {
-    latex::compile(&id, &tex, display_mode)
+    let preamble = state.get_preamble();
+
+    latex::compile(&id, &tex, display_mode, &preamble)
+}
+
+#[tauri::command]
+pub fn reload_preamble_from_disk(
+    app: AppHandle,
+    state: State<'_, latex::LatexSettings>,
+) -> Result<(), String> {
+    let new_content = latex::read_preamble(&app);
+    state.set_preamble(new_content);
+
+    Ok(())
 }

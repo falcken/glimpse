@@ -1,4 +1,5 @@
 import { open } from "@tauri-apps/plugin-dialog";
+import { invoke } from "@tauri-apps/api/core";
 import {
   writeTextFile,
   readTextFile,
@@ -7,6 +8,7 @@ import {
   mkdir,
   BaseDirectory,
 } from "@tauri-apps/plugin-fs";
+import { invalidateLatexCache } from "../latex/render";
 
 const PREAMBLE_FILENAME = "preamble.tex";
 const SETTINGS_FILENAME = "settings.json";
@@ -86,9 +88,9 @@ export class SettingsManager {
       if (!selectedPath || typeof selectedPath !== "string") return;
 
       // Ensure directory exists, recursive = true fails silently if it does
-      await mkdir("", { 
-        baseDir: BaseDirectory.AppConfig, 
-        recursive: true 
+      await mkdir("", {
+        baseDir: BaseDirectory.AppConfig,
+        recursive: true
       });
 
       // Read source, write copy
@@ -97,10 +99,8 @@ export class SettingsManager {
         baseDir: BaseDirectory.AppConfig,
       });
 
-      this.refreshStatus();
-      alert("Preamble updated successfully!");
+      this.preambleChanged();
 
-      window.dispatchEvent(new Event("settings-changed"));
     } catch (err) {
       console.error(err);
       alert("Failed to import file.");
@@ -119,7 +119,8 @@ export class SettingsManager {
         });
       }
 
-      this.refreshStatus();
+      this.preambleChanged();
+
       alert("Preamble reset to default.");
     } catch (err) {
       console.error(err);
@@ -133,23 +134,28 @@ export class SettingsManager {
     }
   }
 
-public async refreshStatus() {
+  private preambleChanged() {
+    this.refreshStatus();
+    invalidateLatexCache();
+    invoke("reload_preamble_from_disk");
+    window.dispatchEvent(new Event("settings-changed"));
+  }
+
+  public async refreshStatus() {
     const statusEl = document.getElementById("preamble-status");
     if (!statusEl) return;
 
     console.log("Refreshing preamble status...");
 
+
     const existsPreamble = await exists(PREAMBLE_FILENAME, {
       baseDir: BaseDirectory.AppConfig,
     });
 
-    // Update Text
     statusEl.textContent = existsPreamble
       ? "Custom preamble loaded"
       : "Using default preamble";
-    
-    // Update Class for Styling
-    // We toggle the 'status-active' class based on existence
+
     if (existsPreamble) {
       statusEl.classList.add("status-active");
     } else {

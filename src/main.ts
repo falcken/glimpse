@@ -32,8 +32,15 @@ md.renderer.rules.math_block_eqno = md.renderer.rules.math_block;
 // Render Markdown on events
 const contentEl = document.getElementById("content");
 
+let lastContent = "";
+let lastCursorLine = 0;
+
 listen<MarkdownUpdateEvent>("markdown-update", (event) => {
   const { fileName, content, cursorLine } = event.payload;
+
+  lastContent = content;
+  lastCursorLine = cursorLine;
+
   resetLatexQueue();
 
   updateFileName(fileName);
@@ -43,6 +50,17 @@ listen<MarkdownUpdateEvent>("markdown-update", (event) => {
   whenLatexQueueEmpty(() => {
     requestAnimationFrame(() => {
       scrollIntoView(cursorLine);
+    });
+  });
+});
+
+window.addEventListener("settings-changed", () => {
+  resetLatexQueue();
+  renderMarkdown(lastContent);
+
+  whenLatexQueueEmpty(() => {
+    requestAnimationFrame(() => {
+      scrollIntoView(lastCursorLine);
     });
   });
 });
