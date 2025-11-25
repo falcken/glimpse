@@ -3,7 +3,6 @@ use std::process::Command;
 use std::sync::Mutex;
 use tauri::{AppHandle, Manager};
 
-
 const DEFAULT_PREAMBLE: &str = r#"
     \usepackage{amsmath}
     \usepackage{amssymb}
@@ -57,25 +56,7 @@ pub fn compile(
     display_mode: bool,
     preamble_content: &str,
 ) -> Result<String, String> {
-    let tex_content = format!(
-        r#"
-            \documentclass[dvisvgm, preview, 12pt]{{standalone}}
-            \usepackage[utf8]{{inputenc}}
-            % --- Preamble below ---
-            {}
-            % --- Input below ---
-            \begin{{document}}
-            {}
-            \end{{document}}
-        "#,
-        preamble_content,
-        // If not display mode, wrap in $...$ for inline math
-        if display_mode {
-            tex.to_string()
-        } else {
-            format!("${}$", tex)
-        }
-    );
+    let tex_content = generate_latex_content(tex, display_mode, preamble_content);
 
     // Create temp dir
     let temp_dir = tempfile::tempdir().map_err(|e| e.to_string())?;
@@ -106,6 +87,7 @@ pub fn compile(
         .args([
             "--zoom=1.1", // Seems to fix scaling issues
             "--exact-bbox",
+            "--no-fonts",
             "--stdout",
             dvi_path.to_str().unwrap(),
         ])
@@ -121,4 +103,55 @@ pub fn compile(
 
     // Return SVG
     String::from_utf8(dvisvgm_output.stdout).map_err(|e| e.to_string())
+}
+
+fn generate_latex_content(tex: &str, display_mode: bool, preamble_content: &str) -> String {
+    format!(
+        r#"
+            \documentclass[dvisvgm, preview, 12pt]{{standalone}}
+            \usepackage[utf8]{{inputenc}}
+            % --- Preamble below ---
+            {}
+            % --- Input below ---
+            \begin{{document}}
+            {}
+            \end{{document}}
+        "#,
+        preamble_content,
+        // If not display mode, wrap in $...$ for inline math
+        if display_mode {
+            if tex.trim_start().starts_with(r"\begin") {
+                tex.to_string()
+            } else {
+                format!(r"\[{}\]", tex)
+            }
+        } else {
+            format!("${}$", tex)
+        }
+    )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_generate_latex_content_display_mode_no_env() {
+        let content = generate_latex_content("x^2", true, "");
+        assert!(content.contains(r"\[x^2\]"));
+    }
+
+    #[test]
+    fn test_generate_latex_content_display_mode_with_env() {
+        let tex = r"\begin{align*} x^2 \end{align*}";
+        let content = generate_latex_content(tex, true, "");
+        assert!(content.contains(tex));
+        assert!(!content.contains(r"\[\begin{align*}"));
+    }
+
+    #[test]
+    fn test_generate_latex_content_inline_mode() {
+        let content = generate_latex_content("x^2", false, "");
+        assert!(content.contains("$x^2$"));
+    }
 }
