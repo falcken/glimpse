@@ -14,9 +14,42 @@
         <div id="file-name">Glimpse</div>
       </div>
     </div>
-    
+
     <main class="container">
       <div id="content"></div>
     </main>
+
+    <dialog id="settings-modal">
+      <div class="settings-sidebar">
+        <h2>Settings</h2>
+        <div class="settings-sidebar-item" data-target="general">General</div>
+        <div class="settings-sidebar-item" data-target="latex">LaTeX</div>
+      </div>
+      <div class="modal-body">
+        <section class="settings-panel active" id="general">
+          <h2>App</h2>
+          <div class="settings-divider"></div>
+          <h3>Version: 1.0.0</h3>
+          <a href="#">Changelog</a>
+          <div class="settings-divider"></div>
+        </section>
+        <section class="settings-panel" id="latex">
+          <h2>LaTeX</h2>
+          <div class="settings-divider"></div>
+          <div id="preamble">
+            <div id="preamble-text">
+              <h3>LaTeX preamble</h3>
+              <p>Set a custom LaTeX preamble.</p>
+              <div id="preamble-status">Checking...</div> 
+            </div>
+            <div id="preamble-buttons">
+              <button id="import-preamble-btn" class="button-primary">Import</button>
+              <button id="reset-preamble-btn" class="button-secondary">Reset</button>
+            </div>
+          </div>
+          <div class="settings-divider"></div>
+        </section>
+      </div>
+    </dialog>
   </body>
 </html>

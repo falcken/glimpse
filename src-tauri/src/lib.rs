@@ -1,13 +1,10 @@
 pub mod commands;
+pub mod constants;
 pub mod latex;
 pub mod models;
 pub mod server;
-pub mod constants;
 
-use tauri::{Builder};
-use tauri::menu::MenuBuilder;
-use tauri_plugin_dialog::{DialogExt, MessageDialogButtons};
-use tauri_plugin_fs::FsExt;
+use tauri::{Builder, Manager};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -17,24 +14,27 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             commands::line_clicked,
-            commands::render_latex
+            commands::render_latex,
+            commands::reload_preamble_from_disk
         ])
         .setup(|app| {
             let app_handle = app.handle().clone();
 
-            let menu = MenuBuilder::new(app)
-                .text("open", "Open")
-                .text("close", "Close")
-                .build()
-                .expect("Failed to build menu");
+            // let menu = MenuBuilder::new(app)
+            //     .text("open", "Open")
+            //     .text("close", "Close")
+            //     .build()
+            //     .expect("Failed to build menu");
 
-            
-            app.set_menu(menu.clone())?;
+            // app.set_menu(menu.clone())?;
 
             tauri::async_runtime::spawn(async move {
                 server::start(app_handle).await;
             });
-            
+
+            let initial_content = latex::read_preamble(&app.handle());
+            app.manage(latex::LatexSettings::new(initial_content));
+
             Ok(())
         })
         .run(tauri::generate_context!())

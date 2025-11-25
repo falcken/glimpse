@@ -7,6 +7,7 @@ import mdLineNumbers from "markdown-it-inject-linenumbers";
 import { renderLatex, renderInlineKatex, resetLatexQueue, whenLatexQueueEmpty } from "./latex/render";
 
 import { setupMenu } from "./menu/menu";
+import { SettingsManager } from './settings/settings';
 
 import texmath from "markdown-it-texmath";
 
@@ -31,8 +32,15 @@ md.renderer.rules.math_block_eqno = md.renderer.rules.math_block;
 // Render Markdown on events
 const contentEl = document.getElementById("content");
 
+let lastContent = "";
+let lastCursorLine = 0;
+
 listen<MarkdownUpdateEvent>("markdown-update", (event) => {
   const { fileName, content, cursorLine } = event.payload;
+
+  lastContent = content;
+  lastCursorLine = cursorLine;
+
   resetLatexQueue();
 
   updateFileName(fileName);
@@ -42,6 +50,17 @@ listen<MarkdownUpdateEvent>("markdown-update", (event) => {
   whenLatexQueueEmpty(() => {
     requestAnimationFrame(() => {
       scrollIntoView(cursorLine);
+    });
+  });
+});
+
+window.addEventListener("settings-changed", () => {
+  resetLatexQueue();
+  renderMarkdown(lastContent);
+
+  whenLatexQueueEmpty(() => {
+    requestAnimationFrame(() => {
+      scrollIntoView(lastCursorLine);
     });
   });
 });
@@ -113,7 +132,17 @@ const handleCmdClick = (event: MouseEvent) => {
   }
 };
 
-document.addEventListener("click", handleCmdClick);
+const initApp = () => {
+  // CMD+Click handling
+  document.addEventListener("click", handleCmdClick);
+
+  // Setup menu
+  setupMenu().catch(console.error);
+
+  // Settings
+  new SettingsManager();
+};
+
 
 // Setup application menu
-setupMenu().catch(console.error);
+initApp();
