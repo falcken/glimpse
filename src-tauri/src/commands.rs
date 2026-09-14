@@ -1,11 +1,11 @@
 use crate::constants;
 use crate::latex;
 use crate::latex::LatexMathCompiler;
-use tauri::Manager;
+use crate::latex::SvgResult;
 use tauri::{command, AppHandle, State};
 use tokio::io::AsyncWriteExt;
 use tokio::net::TcpStream;
-use std::time::{UNIX_EPOCH, SystemTime};
+use serde::Serialize;
 
 #[command]
 pub async fn line_clicked(_app: AppHandle, line_number: u32) {
@@ -25,14 +25,40 @@ pub async fn line_clicked(_app: AppHandle, line_number: u32) {
     }
 }
 
+
+impl Serialize for SvgResult {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        // Define the mirror enum locally inside the function
+        #[derive(Serialize)]
+        #[serde(rename_all = "camelCase", tag = "enum")]
+        enum Mirror<'a> {
+            Perfect { svg: &'a str },
+            Alright { svg: &'a str, errors: &'a Vec<String> },
+            Bad { errors: &'a Vec<String> },
+        }
+
+        // Map the original type to the local mirror type
+        let mirror = match self {
+            SvgResult::Perfect { svg } => Mirror::Perfect { svg },
+            SvgResult::Alright { svg, errors } => Mirror::Alright { svg, errors },
+            SvgResult::Bad { errors } => Mirror::Bad { errors },
+        };
+
+        // Serialize the mirror instance
+        mirror.serialize(serializer)
+    }
+}
+
 #[command]
 pub async fn render_latex(
     state: State<'_, latex::LatexMathCompilerImpl>,
     tex: String,
     display_mode: bool,
-) -> Result<String, String> {
-    println!("{},{}", SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_micros(), tex);
-    state.math_to_svg(&tex).await
+) -> Result<SvgResult, ()> {
+   Ok(state.math_to_svg(&tex.to_string(), display_mode).await.into())
 }
 
 #[command]

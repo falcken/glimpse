@@ -88,7 +88,6 @@ body {
   margin-bottom: 1rem;
   font-weight: 600;
   line-height: 1.25;
-  color: #ffffff;
 }
 
 #content h1 { font-size: 2rem; }
@@ -128,7 +127,6 @@ body {
 }
 
 #content pre {
-  background-color: #161b22;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 1rem;

@@ -1,5 +1,5 @@
 import { listen } from "@tauri-apps/api/event";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke, convertFileSrc } from "@tauri-apps/api/core";
 
 import MarkdownIt from "markdown-it";
 import mdLineNumbers from "markdown-it-inject-linenumbers";
@@ -31,8 +31,11 @@ md.renderer.rules.math_block = (tokens, idx): string => {
 md.renderer.rules.image = (tokens, idx): string => {
   const token = tokens[idx]
   const src = token.attrGet('src');
+  if (!src) return `<div>NOT FOUND</div>`
+
+  const newSrc = convertFileSrc(`${BASE_PATH}${src}`)
   
-  return `<img src="${BASE_PATH}/${src}" alt="${token.attrGet('alt') || ''}">`;
+  return `<img src="${newSrc}" alt="${token.attrGet('alt') || ''}">`;
 }
 
 md.renderer.rules.math_inline_double = md.renderer.rules.math_block;
@@ -71,8 +74,7 @@ const updateFileName = (fileName: string) => {
 };
 
 const renderMarkdown = (markdown: string) => {
-  const markdownReduced = markdown.replace(/([^\n])\n([^\n])/, "$1$2")
-  const html = md.render(markdownReduced);
+  const html = md.render(markdown);
   if (contentEl) contentEl.innerHTML = html;
 };
 
