@@ -1,8 +1,19 @@
 import { invoke } from "@tauri-apps/api/core";
-import katex from 'katex';
 import { v4 as uuidv4 } from 'uuid';
 
-const latexCache: Map<string, string> = new Map();
+class MathRenderer {
+  constructor() {
+    
+  }
+  
+  async render(id: string, math: string, displayMode: boolean): SVGSVGElement {
+    
+  }
+}
+
+type EventualString = { enum: 'value', string: string } | { enum: 'promise', promise: Promise<string> }
+
+const latexCache: Map<string, EventualString> = new Map();
 let activeRenders = 0;
 let latexQueueCallback: (() => void) | null = null;
 
@@ -31,22 +42,6 @@ const onRenderComplete = () => {
   }
 }
 
-export const renderInlineKatex = (tokens: any[], idx: number, displayMode: boolean): string => {
-  const token = tokens[idx];
-  const tex = token.content;
-
-  try {
-    return katex.renderToString(tex, {
-      throwOnError: false,
-      displayMode: displayMode
-    });
-  } catch (error) {
-    console.error("KaTeX Error:", error);
-    return `<span class="katex-error">${tex}</span>`;
-  }
-};
-
-// Keep in mind that inline is handled by KaTeX right now.
 export const renderLatex = (tokens: any[], idx: number, displayMode: boolean): string => {
   const token = tokens[idx];
   const tex = token.content;
@@ -57,7 +52,7 @@ export const renderLatex = (tokens: any[], idx: number, displayMode: boolean): s
   console.log('Rendering LaTeX:', { id, tex });
   const escapedTex = tex.replace(/"/g, '&quot;');
 
-  void callRenderer(id, escapedTex, displayMode);
+  callRenderer(id, escapedTex, displayMode);
 
   return displayMode
     ? blockPlaceholderStyle(id)
@@ -78,10 +73,13 @@ const callRenderer = async (id: string, tex: string, displayMode: boolean) => {
 
   if (latexCache.has(hash)) {
     console.log('Using cached LaTeX for', id);
-    const svgString = latexCache.get(hash);
+    const eventualString = latexCache.get(hash)!;
+    const svgString = eventualString.enum === 'value' ?
+      eventualString.string :
+      (await eventualString.promise)
 
     setTimeout(() => {
-      replaceWithLatex(id, svgString!, displayMode);
+      replaceWithLatex(id, svgString, displayMode);
       onRenderComplete();
     }, 0);
 
@@ -89,12 +87,12 @@ const callRenderer = async (id: string, tex: string, displayMode: boolean) => {
   }
 
   try {
-    const svgString = await invoke<string>('render_latex', { id, tex, displayMode });
-    console.log('Received rendered SVG for', id);
+    const svgPromise = invoke<string>('render_latex', { id, tex, displayMode })
+    latexCache.set(hash, { enum: 'promise', promise: svgPromise })
 
+    const svgString = await svgPromise
     replaceWithLatex(id, svgString, displayMode);
-
-    latexCache.set(hash, svgString);
+    latexCache.set(hash, { enum: 'value', string: svgString });
   } catch (error) {
     console.error('Error rendering LaTeX:', error);
   } finally {
@@ -102,11 +100,63 @@ const callRenderer = async (id: string, tex: string, displayMode: boolean) => {
   }
 };
 
+function alignSvgToBaseline(svgElement : SVGSVGElement) {
+    if (!svgElement) return;
+
+    // 1. Ensure vertical-align can take effect (ignored on display: block)
+    const computedStyle = window.getComputedStyle(svgElement);
+    if (computedStyle.display === 'block') {
+        svgElement.style.display = 'inline-block';
+    }
+
+    // 2. Get viewBox height
+    const vb = svgElement.viewBox?.baseVal;
+    if (!vb || vb.height === 0) return;
+
+    // 3. Find target rectangle (case-insensitive hex match)
+    const rect: SVGRectElement | null = svgElement.querySelector('rect[fill="#f4f4f4" i]') || 
+                 svgElement.querySelector('rect[fill="#F4F4F4"]');
+    if (!rect) return;
+
+    // 4. Get exact geometry using getBBox() (handles transforms and missing attributes)
+    const rectBox = rect.getBBox();
+    const rectBottom = rectBox.y + rectBox.height;
+    const svgBottom = vb.y + vb.height;
+    const gapInUserUnits = svgBottom - rectBottom;
+
+    // 5. Calculate shift in real screen pixels
+    const renderedHeight = svgElement.getBoundingClientRect().height;
+    if (renderedHeight === 0) return; // Element is hidden or not attached to DOM
+
+    const gapPx = (gapInUserUnits / vb.height) * renderedHeight;
+
+    // 6. Apply pixel offset directly
+    svgElement.style.verticalAlign = `-${gapPx}px`;
+}
+
+function uniqifySvgUses(svg : SVGSVGElement, id: string) {
+  const defs = svg.querySelector("defs")
+  if (!defs) return
+  for (const elm of defs.children) {
+    elm.id = `${id}-${elm.id}`
+  }
+  for (const use of svg.querySelectorAll("use")) {
+    let attr = use.getAttribute("xlink:href")
+    if (!attr) continue
+    attr = attr.substring(1, attr.length) // remove intial '#'
+    use.setAttribute("xlink:href", `#${id}-${attr}`)
+  }
+}
+
 const replaceWithLatex = (id: string, svgString: string, displayMode: boolean) => {
   const placeholder = document.getElementById(id);
   if (placeholder) {
     placeholder.innerHTML = svgString;
+    const svg = placeholder.querySelector('svg')! 
+    alignSvgToBaseline(svg)
     placeholder.classList.remove('latex-placeholder');
     placeholder.classList.add(displayMode ? 'latex-rendered-block' : 'latex-rendered-inline');
+    placeholder.style.width = ""
+    uniqifySvgUses(svg, id)
   }
 }

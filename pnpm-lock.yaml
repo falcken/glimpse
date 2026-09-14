@@ -32,6 +32,9 @@ importers:
       markdown-it-inject-linenumbers:
         specifier: ^0.3.0
         version: 0.3.0
+      markdown-it-math:
+        specifier: ^6.0.1
+        version: 6.0.1
       markdown-it-texmath:
         specifier: ^1.0.0
         version: 1.0.0
@@ -470,11 +473,18 @@ packages:
   markdown-it-inject-linenumbers@0.3.0:
     resolution: {integrity: sha512-c9ymcXUunjCJ8vNBNrg3JMT5d94IxAy6KHJ891vuZf/go98opU77X5neiVIi9Rer3v+03WYk5913J1pVmJOV0g==}
 
+  markdown-it-math@6.0.1:
+    resolution: {integrity: sha512-rtyAf+/yVLdD2Nrn+zXEnkLPIWPMVRrwwGr3eI6LoxW87BRPTx/Cmpjt1T5uc0pavH7HvGxCegmrpNHhpuJ8PA==}
+
   markdown-it-texmath@1.0.0:
     resolution: {integrity: sha512-4hhkiX8/gus+6e53PLCUmUrsa6ZWGgJW2XCW6O0ASvZUiezIK900ZicinTDtG3kAO2kon7oUA/ReWmpW2FByxg==}
 
   markdown-it@14.1.0:
     resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
+    hasBin: true
+
+  mathup@1.0.2:
+    resolution: {integrity: sha512-E9RCa/Zdr2KG2snIxwz1pmWLcJaq2mKHxM0rhqmeGFM7TDDIyZAd1oWhJEG1M4EsCvO57ygs2OTyhFdKXKh38A==}
     hasBin: true
 
   mdurl@2.0.0:
@@ -508,6 +518,10 @@ packages:
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
+
+  temml@0.13.5:
+    resolution: {integrity: sha512-aPkDDgunanpLNL0ql32HbolqLep+w8DRcVXRql7rWrMt/PhczdLgL4UBYYVU3BYjCNjkGq4EqwIicu/zWr1iOg==}
+    engines: {node: '>=18.13.0'}
 
   tinyglobby@0.2.15:
     resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
@@ -851,6 +865,11 @@ snapshots:
 
   markdown-it-inject-linenumbers@0.3.0: {}
 
+  markdown-it-math@6.0.1:
+    optionalDependencies:
+      mathup: 1.0.2
+      temml: 0.13.5
+
   markdown-it-texmath@1.0.0: {}
 
   markdown-it@14.1.0:
@@ -861,6 +880,9 @@ snapshots:
       mdurl: 2.0.0
       punycode.js: 2.3.1
       uc.micro: 2.1.0
+
+  mathup@1.0.2:
+    optional: true
 
   mdurl@2.0.0: {}
 
@@ -907,6 +929,9 @@ snapshots:
       fsevents: 2.3.3
 
   source-map-js@1.2.1: {}
+
+  temml@0.13.5:
+    optional: true
 
   tinyglobby@0.2.15:
     dependencies:

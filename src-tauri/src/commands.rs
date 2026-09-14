@@ -1,5 +1,6 @@
 use crate::constants;
 use crate::latex;
+use tauri::Manager;
 use tauri::{command, AppHandle, State};
 use tokio::io::AsyncWriteExt;
 use tokio::net::TcpStream;
@@ -24,14 +25,24 @@ pub async fn line_clicked(_app: AppHandle, line_number: u32) {
 
 #[command]
 pub async fn render_latex(
+    app: AppHandle,
     state: State<'_, latex::LatexSettings>, // <--- Inject State here
     id: String,
     tex: String,
     display_mode: bool,
 ) -> Result<String, String> {
     let preamble = state.get_preamble();
-
-    latex::compile(&id, &tex, display_mode, &preamble)
+    match app.path().app_local_data_dir() {
+        Ok(path) => {
+            let mut vec = Vec::new();
+            vec.push(tex);
+            latex::compile(vec, display_mode, &preamble, &path)
+        }
+        Err(err) => {
+            // TODO: fix
+            panic!("Couldn't find apps local data!")
+        }
+    }
 }
 
 #[tauri::command]

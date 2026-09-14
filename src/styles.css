@@ -7,12 +7,13 @@
   -webkit-text-size-adjust: 100%;
 
   --titlebar-height: 40px;
-  --bg-color: #0d1117;
-  --header-bg: #161b22;
-  --border-color: #30363d;
-  --teal-accent: rgb(76, 155, 160);
-  --text-primary: #c9d1d9;
-  --text-secondary: #8b949e;
+
+  --bg-color: #f8f9fa;         
+  --header-bg: #ffffff;        
+  --border-color: #d0d7de;    
+  --teal-accent: rgb(76, 155, 160); 
+  --text-primary: #24292f;     
+  --text-secondary: #57606a;
 }
 
 body {
@@ -165,14 +166,20 @@ body {
 }
 
 .latex-rendered-block svg {
-  vertical-align: middle;
-  max-width: 100%;
   height: auto;
   padding: 1em;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   fill: currentColor;
-  background-color: #161b22;
+}
+
+.latex-rendered-inline,
+#content svg:not(.latex-rendered-block svg) {
+  display: inline-block;
+  fill: currentColor;
+  width: auto;
+  height: auto;
+  overflow: visible; /* PREVENTS CLIPPING of exponents, descenders & roots */
 }
 
 .latex-placeholder {
@@ -392,4 +399,8 @@ dialog[open] {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+rect[fill="#f4f4f4"] {
+  opacity: 0%;
 }

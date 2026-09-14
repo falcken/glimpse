@@ -11,7 +11,6 @@ import {
 import { invalidateLatexCache } from "../latex/render";
 
 const PREAMBLE_FILENAME = "preamble.tex";
-const SETTINGS_FILENAME = "settings.json";
 
 export class SettingsManager {
   private modal: HTMLDialogElement;
@@ -83,7 +82,7 @@ export class SettingsManager {
     try {
       const selectedPath = await open({
         multiple: false,
-        filters: [{ name: "LaTeX", extensions: ["tex"] }],
+        filters: [{ name: "LaTeX", extensions: ["tex", "sty"] }],
       });
 
       if (!selectedPath || typeof selectedPath !== "string") return;
