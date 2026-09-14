@@ -1,57 +1,12 @@
 import { invoke } from "@tauri-apps/api/core";
 import { v4 as uuidv4 } from 'uuid';
 
-class MathRenderer {
-  constructor() {
-    
-  }
-  
-  async render(id: string, math: string, displayMode: boolean): SVGSVGElement {
-    
-  }
-}
-
-type EventualString = { enum: 'value', string: string } | { enum: 'promise', promise: Promise<string> }
-
-const latexCache: Map<string, EventualString> = new Map();
-let activeRenders = 0;
-let latexQueueCallback: (() => void) | null = null;
-
-export const invalidateLatexCache = () => {
-  latexCache.clear();
-  console.log('LaTeX cache invalidated.');
-};
-
-export const resetLatexQueue = () => {
-  activeRenders = 0;
-  latexQueueCallback = null;
-};
-
-export const whenLatexQueueEmpty = (callback: () => void) => {
-  if (activeRenders === 0) {
-    callback();
-  } else {
-    latexQueueCallback = callback;
-  }
-};
-
-const onRenderComplete = () => {
-  activeRenders--;
-  if (activeRenders === 0 && latexQueueCallback) {
-    latexQueueCallback();
-  }
-}
-
 export const renderLatex = (tokens: any[], idx: number, displayMode: boolean): string => {
   const token = tokens[idx];
   const tex = token.content;
   const id = uuidv4();
 
-  activeRenders++;
-
-  console.log('Rendering LaTeX:', { id, tex });
   const escapedTex = tex.replace(/"/g, '&quot;');
-
   callRenderer(id, escapedTex, displayMode);
 
   return displayMode
@@ -69,34 +24,13 @@ const inlinePlaceholderStyle = (width: number, id: string) => `<span class="late
 const blockPlaceholderStyle = (id: string) => `<div class="latex-placeholder" id="${id}"></div>`;
 
 const callRenderer = async (id: string, tex: string, displayMode: boolean) => {
-  const hash = `${tex}-${displayMode}`;
-
-  if (latexCache.has(hash)) {
-    console.log('Using cached LaTeX for', id);
-    const eventualString = latexCache.get(hash)!;
-    const svgString = eventualString.enum === 'value' ?
-      eventualString.string :
-      (await eventualString.promise)
-
-    setTimeout(() => {
-      replaceWithLatex(id, svgString, displayMode);
-      onRenderComplete();
-    }, 0);
-
-    return;
-  }
-
   try {
-    const svgPromise = invoke<string>('render_latex', { id, tex, displayMode })
-    latexCache.set(hash, { enum: 'promise', promise: svgPromise })
-
-    const svgString = await svgPromise
+    const svgString = await invoke<string>('render_latex', { tex, displayMode })
     replaceWithLatex(id, svgString, displayMode);
-    latexCache.set(hash, { enum: 'value', string: svgString });
   } catch (error) {
     console.error('Error rendering LaTeX:', error);
   } finally {
-    onRenderComplete();
+    // TODO: should we notify like before?
   }
 };
 

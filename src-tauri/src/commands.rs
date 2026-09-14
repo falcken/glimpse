@@ -1,9 +1,11 @@
 use crate::constants;
 use crate::latex;
+use crate::latex::LatexMathCompiler;
 use tauri::Manager;
 use tauri::{command, AppHandle, State};
 use tokio::io::AsyncWriteExt;
 use tokio::net::TcpStream;
+use std::time::{UNIX_EPOCH, SystemTime};
 
 #[command]
 pub async fn line_clicked(_app: AppHandle, line_number: u32) {
@@ -25,33 +27,19 @@ pub async fn line_clicked(_app: AppHandle, line_number: u32) {
 
 #[command]
 pub async fn render_latex(
-    app: AppHandle,
-    state: State<'_, latex::LatexSettings>, // <--- Inject State here
-    id: String,
+    state: State<'_, latex::LatexMathCompilerImpl>,
     tex: String,
     display_mode: bool,
 ) -> Result<String, String> {
-    let preamble = state.get_preamble();
-    match app.path().app_local_data_dir() {
-        Ok(path) => {
-            let mut vec = Vec::new();
-            vec.push(tex);
-            latex::compile(vec, display_mode, &preamble, &path)
-        }
-        Err(err) => {
-            // TODO: fix
-            panic!("Couldn't find apps local data!")
-        }
-    }
+    println!("{},{}", SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_micros(), tex);
+    state.math_to_svg(&tex).await
 }
 
-#[tauri::command]
+#[command]
 pub fn reload_preamble_from_disk(
     app: AppHandle,
-    state: State<'_, latex::LatexSettings>,
+    state: State<'_, latex::LatexMathCompilerImpl>,
 ) -> Result<(), String> {
     let new_content = latex::read_preamble(&app);
-    state.set_preamble(new_content);
-
-    Ok(())
+    state.set_preamble(new_content)
 }

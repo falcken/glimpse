@@ -8,7 +8,6 @@ import {
   mkdir,
   BaseDirectory,
 } from "@tauri-apps/plugin-fs";
-import { invalidateLatexCache } from "../latex/render";
 
 const PREAMBLE_FILENAME = "preamble.tex";
 
@@ -136,7 +135,6 @@ export class SettingsManager {
 
   private preambleChanged() {
     this.refreshStatus();
-    invalidateLatexCache();
     invoke("reload_preamble_from_disk");
     window.dispatchEvent(new Event("settings-changed"));
   }
